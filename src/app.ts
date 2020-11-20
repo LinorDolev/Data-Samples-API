@@ -10,6 +10,7 @@ import ruleRouter from './routers/ruleRouter';
 const app = express();
 
 app.use(bodyParser.json()); // for parsing application/json
+
 app.use('/data-sample', dataSampleRouter);
 app.use('/rule', ruleRouter);
 

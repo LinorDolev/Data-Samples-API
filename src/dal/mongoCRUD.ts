@@ -44,6 +44,9 @@ export default class MongoCRUD<T> {
     this.connect((collection: MongoCollection) => collection.delete({ "_id": id }));
   }
 
+  clearDB(): Promise<T> {
+    return this.connect((collection: MongoCollection) => collection.remove({}));
+  }
   private async getOrCreate(collectionName: string, db: Db) {
     let collectionExists = await db.listCollections({ name: collectionName })
       .hasNext();
