@@ -20,14 +20,15 @@ export default class DataSampleService {
     return DataSampleService.instance.mongoCRUD.create(sample);
   }
 
-  async findSample(id: string, timezone?: string): Promise<DataSample> {
+  async findSample(id: string, timezone?: string): Promise<DataSample | any> {
     return this.mongoCRUD.read({ _id: new ObjectId(id.toString()) })
       .then(readSample => {
         if (!timezone) {
           return readSample;
         }
-        let convertDateToTimeZone = moment.tz(readSample.timestamp, timezone);
-        readSample.timestamp = new Date(convertDateToTimeZone.format());
+        let dateInOtherTimezone = moment.tz(readSample.timestamp, timezone);
+
+        return { [`timestamp_at_${timezone}`]: dateInOtherTimezone.format(), ...readSample };
       });
   }
 

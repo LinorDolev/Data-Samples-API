@@ -20,6 +20,7 @@ describe('DataSamples Tests', () => {
     await db.clearDB()
   )
 
+  // POST REQUESTS
   it('should create a single data sample successfully', async () => {
     const timestamp = new Date();
     const value = 10;
@@ -82,6 +83,7 @@ describe('DataSamples Tests', () => {
       })
   })
 
+  // GET REQUESTS
   it('should get a single data sample successfully', async () => {
     const timestamp = new Date();
     const value = 10;
@@ -89,9 +91,27 @@ describe('DataSamples Tests', () => {
     return db.create(dataSample).then((sample) => {
       console.log(sample);
       return chai.request(app)
-        .get(`${BASE_URL}/${sample['_id']}/+2GMT`)
+        .get(`${BASE_URL}/${sample['_id']}/`)
         .then(res => {
           return chai.expect(res.body.toString()).to.eql(sample.toString());
+        }
+        )
+    });
+  })
+
+  it('should get a single data sample with timestamp in another timezone successfully', async () => {
+    const timestamp = new Date();
+    const value = 10;
+    const dataSample = new DataSample(timestamp, SampleType.Volume, value);
+    return db.create(dataSample).then((sample) => {
+      console.log(sample);
+      return chai.request(app)
+        .get(`${BASE_URL}/${sample['_id']}/America%2fNew_York`)
+        .then(res => {
+          let timezoneOffset = new Date(res.body.timestamp).getTimezoneOffset()
+          console.log(res.body.timestamp);
+          console.log(timezoneOffset);
+          return //chai.expect().to.eql();
         }
         )
     });
