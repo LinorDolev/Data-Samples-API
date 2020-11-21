@@ -1,12 +1,16 @@
+import SampleType from "./sampleType";
+
 export default class ETLTimeAggregation {
+  sampleType: SampleType;
   startTime: Date;
   values: Array<number>;
-  calculationType: Calculation;
+  calculationType: CalculationType;
   periodMinutes: number;
   intervalMinutes: number;
 
-  constructor(startTime: Date, values: Array<number>, calculationType: Calculation,
+  constructor(sampleType: SampleType, startTime: Date, values: Array<number>, calculationType: CalculationType,
     periodMinutes: number, intervalMinutes: number) {
+    this.sampleType = sampleType;
     this.startTime = startTime;
     this.values = values;
     this.calculationType = calculationType;
@@ -15,7 +19,7 @@ export default class ETLTimeAggregation {
   }
 }
 
-export enum Calculation {
+export enum CalculationType {
   Average = 'average',
   Max = 'max',
   Min = 'min',
