@@ -13,7 +13,7 @@ ruleRouter.use(requestBodyValidator(Rule));
 
 ruleRouter.post('/', async (request, response, next) => {
   return ruleService.createRule(request.body)
-    .then(response.send)
+    .then((rule) => response.send(rule))
     .catch(next);
 });
 
