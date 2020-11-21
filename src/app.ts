@@ -8,7 +8,6 @@ import * as dotenv from 'dotenv'; dotenv.config();
 import dataSampleRouter from './routers/dataSampleRouter';
 import ruleRouter from './routers/ruleRouter';
 
-
 const app = express();
 
 app.use(bodyParser.json()); // for parsing application/json

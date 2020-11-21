@@ -11,6 +11,7 @@
  ### Examples
  1. ` {temperature} > 50 ` - checks that the last (by timestamp) temperature sample value is greater than 50 degrees (assuming in celsius)
  2. ` {pressure} < 80 or {volume} < 100 ` 
+ 3. `2 < {temperature} or {pressure} > 90 AND 4 < {volume}`
 
  #### Syntax and Constraints
  1. Allowed relational operators are: <, >, ==, !=
@@ -20,4 +21,4 @@
  4. You can't compare between numbers or between samples, following examples are NOT allowed:
   -  {temprature} < {volume}
   - 2.3 < 4.5
- 5. You can concat as many rules as you wish using 'and' and 'or' operators 
+ 5. You can concat as many rules as you wish using 'and' and 'or' operators

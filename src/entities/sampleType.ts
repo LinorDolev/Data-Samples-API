@@ -1,5 +1,5 @@
 enum SampleType {
-  Temprature = 'temprature',
+  Temprature = 'temperature',
   Volume = 'volume',
   Pressure = 'pressure'
 };

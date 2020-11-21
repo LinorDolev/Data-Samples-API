@@ -13,14 +13,22 @@ export default class DataSampleService {
     this.mongoCRUD = new MongoCRUD<DataSample>(DataSample.name);
   }
 
-  async addSample(sample: DataSample) {
+  query() {
+    const options = {
+      sort: { timestamp: -1 },
+      limit: 1
+    };
+    return this.mongoCRUD.read({}, options);
+  }
+
+  async addSample(sample: DataSample): Promise<DataSample> {
     this.validateDate(sample.timestamp);
     this.validateSampleType(sample.sampleType, sample.value);
 
     return DataSampleService.instance.mongoCRUD.create(sample);
   }
 
-  async findSample(id: string, timezone?: string) {
+  async findSample(id: string, timezone?: string): Promise<DataSample> {
     return this.mongoCRUD.read({ _id: new ObjectId(id.toString()) })
       .then(readSample => {
         if (!timezone) {
@@ -31,11 +39,18 @@ export default class DataSampleService {
       });
   }
 
-  async updateSample(id: string, dataSample: DataSample) {
+  async findLastBySampleType(sampleType: SampleType): Promise<DataSample> {
+    return this.mongoCRUD.read({ sampleType }, {
+      sort: { timestamp: -1 },
+      limit: 1
+    });
+  }
+
+  async updateSample(id: string, dataSample: DataSample): Promise<DataSample> {
     return this.mongoCRUD.update(id, dataSample);
   }
 
-  async deleteSample(id: string) {
+  async deleteSample(id: string): Promise<DataSample> {
     return this.mongoCRUD.delete(id);
   }
 
@@ -54,20 +69,20 @@ export default class DataSampleService {
 
   validateSampleType(type: string, value: number) {
     switch (type) {
-      case SampleType.Volume: 
+      case SampleType.Volume:
         if (value < 0) {
           throw new Error(`${SampleType.Volume} can not be negative, received: ${value}`);
         }
         break;
-      
-      case SampleType.Temprature: 
+
+      case SampleType.Temprature:
         if (value < DataSampleService.MIN_TEMPRATURE_CELSIUS) {
           throw new Error(`Assuming temprature is measured in celsius: ${value} 
                           is below absolute zero (${DataSampleService.MIN_TEMPRATURE_CELSIUS}° C)`)
         }
         break;
-      
-      default: 
+
+      default:
         break;
     }
   }

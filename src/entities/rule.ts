@@ -11,6 +11,9 @@ export default class Rule {
 
   static RULE_REGEX = `^${Rule.SINGLE_OPERATOR_REGEX}\\s*(${Rule.LOGICAL_REGEX}\\s*${Rule.SINGLE_OPERATOR_REGEX}\\s*)*$`;
 
+  @Expose()  
+  _id: string;
+  
   @Expose()
   @IsDefined()
   @IsString()
