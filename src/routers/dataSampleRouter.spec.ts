@@ -1,6 +1,9 @@
-import chai, { } from 'chai';
+import chai from 'chai';
 import chaihttp from 'chai-http';
-import mocha, { describe, beforeEach, it } from 'mocha';
+import { describe, beforeEach, it } from 'mocha';
+import * as dotenv from 'dotenv'; dotenv.config()
+
+import app from '../app';
 import MongoCRUD from '../dal/mongoCRUD';
 
 import DataSample from '../entities/dataSample';
@@ -12,31 +15,29 @@ const db = new MongoCRUD<DataSample>(DataSample.name);
 const BASE_URL = '/data-sample';
 const SERVER = `http://localhost:${process.env.PORT}`
 
-describe('DataSamples', () => {
-  beforeEach((done) =>  //Before each test we empty the database
-    db.clearDB().then(() => done())
+describe('DataSamples Tests', () => {
+  beforeEach(async () =>  //Before each test empty the database
+    await db.clearDB()
   )
-});
 
-
-describe('/GET DataSample', () => {
-  it('it should get a single data sample', (done) => {
+  it('it should get a single data sample', async () => {
     const date = new Date();
     const value = 10;
     const dataSample = new DataSample(date, SampleType.Volume, value);
-    db.create(dataSample).then((sample) => {
-      chai.request(SERVER)
-        .get(`${BASE_URL}/${sample.id}`)
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-            done();
-          }
-          res.should.have.status(200);
-          res.body.should.be.a(DataSample);
-          res.body.should.be.eql(sample);
-          return done();
-        });
+    return db.create(dataSample).then((sample) => {
+      console.log(sample);
+      return chai.request(app)
+        .get(`${BASE_URL}/${sample['_id']}/+2GMT`)
+        .then(res => {
+          return chai.expect(res.body.toString()).to.eql(sample.toString());
+        }
+        )
     });
-  });
+  })
+  //describe('/GET DataSample Sanity', () =>
+
+  // );
+
+
 });
+

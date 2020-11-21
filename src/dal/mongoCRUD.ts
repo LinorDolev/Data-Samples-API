@@ -1,53 +1,54 @@
 import DataSample from '../entities/dataSample';
-import { MongoClient, MongoCollection, Db } from 'mongodb';
+import { MongoClient, MongoCollection, Db, Document, ObjectId } from 'mongodb';
 
 
 export default class MongoCRUD<T> {
   private readonly MONGO_URI = process.env.MONGO_URI;
   private readonly DB_NAME = process.env.DB_NAME;
 
-  private client: MongoClient;
+  //private client: MongoClient;
   private collection: string;
 
   constructor(collection: string) {
-    console.log('URI:')
-    console.log(this.MONGO_URI);
+    console.log('URI:' + this.MONGO_URI);
     this.collection = collection;
   }
 
   private async connect(callback: Function): Promise<T> {
-    return MongoClient.connect(this.MONGO_URI)
-      .then((client) => {
-        return this.getOrCreate(this.collection, client.db(this.DB_NAME))
-          .then(collection =>
-            callback(collection)
-              .then((result) => {
-                client.close();
-                return result.ops;
-              }));
+    return MongoClient.connect(this.MONGO_URI, { useUnifiedTopology: true })
+      .then(async (client: MongoClient) => {
+        return this.getOrCreateCollection(this.collection, client.db(this.DB_NAME))
+          .then(collection => callback(collection)
+            .then((result: Document) => {
+              client.close();
+              return result;
+            }));
       });
   }
 
   async create(document: T): Promise<T> {
-    return this.connect((collection: MongoCollection) => collection.insertOne(document));
+    return this.connect((collection: MongoCollection) => collection.insertOne(document)
+      .then((result) => result.ops[0]));
   }
 
-  async read(id: object): Promise<T> {
-    return this.connect((collection: MongoCollection) => collection.findOne(id));
+  async read(query: any): Promise<T> {
+    return this.connect((collection: MongoCollection) => collection.findOne(query));
   }
 
-  update(id: object, dataSample: DataSample) {
-    this.connect((collection: MongoCollection) => collection.updateOne({ "_id": id }, dataSample));
+  update(id: string, dataSample: DataSample) {
+    this.connect((collection: MongoCollection) => collection.updateOne({ _id: new ObjectId(id.toString()) },
+      { '$set': dataSample }));
   }
 
-  delete(id: object) {
-    this.connect((collection: MongoCollection) => collection.delete({ "_id": id }));
+  async delete(id: string) {
+    this.connect((collection: MongoCollection) => collection
+      .deleteOne({ _id: new ObjectId(id.toString()) }));
   }
 
   clearDB(): Promise<T> {
-    return this.connect((collection: MongoCollection) => collection.remove({}));
+    return this.connect((collection: MongoCollection) => collection.deleteMany({}));
   }
-  private async getOrCreate(collectionName: string, db: Db) {
+  private async getOrCreateCollection(collectionName: string, db: Db) {
     let collectionExists = await db.listCollections({ name: collectionName })
       .hasNext();
     if (collectionExists) {

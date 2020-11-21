@@ -1,4 +1,6 @@
 import express from 'express';
+import expressLogging from 'express-logging';
+import logger from 'logops';
 import bodyParser from 'body-parser';
 import * as dotenv from 'dotenv'; dotenv.config();
 
@@ -10,12 +12,17 @@ import ruleRouter from './routers/ruleRouter';
 const app = express();
 
 app.use(bodyParser.json()); // for parsing application/json
-
+app.use(expressLogging(logger))
 app.use('/data-sample', dataSampleRouter);
 app.use('/rule', ruleRouter);
 
+app.use((error, req, res, next) => {
+  return res.status(500).json(error.toString());
+});
 
 app.listen(process.env.PORT);
+
+export default app;
 /**
 
 Supported APIs:

@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "test": "tsc && mocha ./dist/**/*.spec.js .env", 
+    "test": "tsc && mocha ./dist/**/*.spec.js",
     "test:debug": "tsc && npm run compile && mocha --inspect-brk ./dist/**/*.spec.js",
     "start": "tsc && node dist/app.js --trace-deprecation"
   },
@@ -28,6 +28,9 @@
     "class-validator": "^0.12.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-logging": "^1.1.1",
+    "logops": "^2.1.1",
+    "moment-timezone": "^0.5.32",
     "mongodb": "^3.6.3"
   }
 }

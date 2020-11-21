@@ -5,7 +5,7 @@ import { IsDefined, IsEnum, IsNumber } from 'class-validator';
 
 export default class DataSample {
   @Expose()
-  id: string;
+  _id: string;
 
   @IsDefined()
   @Transform((input) => new Date(input))

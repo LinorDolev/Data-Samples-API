@@ -1,33 +1,38 @@
-import express, { request, response } from 'express';
-import { plainToClass } from "class-transformer";
-import { validate } from "class-validator";
+import express from 'express';
 
 import DataSampleService from '../services/dataSampleService';
 import DataSample from '../entities/dataSample';
-
+import requestBodyValidator from '../utils/requestBodyValidator';
 
 const dataSampleRouter = express.Router();
 const sampleService = DataSampleService.getInstance();
 
-dataSampleRouter.post('/', (request, response) => {
-  const dataSample = plainToClass(DataSample, request.body, { excludeExtraneousValues: true });
-  validate(dataSample).then(async errors => {
-    if (errors.length > 0) {
-      return response.send(errors.map(error => JSON.stringify(error.constraints)));
-    }
-    const createdSample = await sampleService.addSample(dataSample);
-    response.send(createdSample);
-  });
+dataSampleRouter.use(requestBodyValidator(DataSample));
+
+dataSampleRouter.post('/', async (request, response, next) => {
+  sampleService.addSample(request.body)
+    .then(response.send)
+    .catch(next);
 });
 
-// Should support reading in any timezone
-dataSampleRouter.get('/:id/:timezone', (request, response) => {
+dataSampleRouter.get('/:id/:timezone?', (request, response, next) => {
   const { id, timezone } = request.params;
-  // const sample = await sampleService.findSample(new String(id), timezone);
+  sampleService.findSample(id, timezone)
+    .then(response.send)
+    .catch(next);
 });
 
-dataSampleRouter.put('/:id',);
+dataSampleRouter.put('/:id', (request, response, next) => {
+  const dataSample = request.body;
+  sampleService.updateSample(request.params.id, dataSample)
+    .then(response.send)
+    .catch(next);
+});
 
-dataSampleRouter.delete('/:id',);
+dataSampleRouter.delete('/:id', (request, response, next) => {
+  sampleService.deleteSample(request.params.id)
+    .then(response.send)
+    .catch(next);
+});
 
 export default dataSampleRouter;
