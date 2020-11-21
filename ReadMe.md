@@ -5,6 +5,8 @@
   - sampleType - Can be one of the following: volume, pressure, temperature. 
   - value - A number which is validated according to the sampleType
 
+You can query a sample and view it timestamp any timezone from: https://momentjs.com/timezone//
+
 ## Rule
  - formula - a formula that will later be assessed/evaluated with data samples values, for a True/False result.
 
@@ -22,3 +24,5 @@
   -  {temprature} < {volume}
   - 2.3 < 4.5
  5. You can concat as many rules as you wish using 'and' and 'or' operators
+
+## ETL Tasks
