@@ -8,7 +8,7 @@ export default class DataSample {
   _id: string;
 
   @IsDefined()
-  @Transform((input) => new Date(input))
+  @Transform((input) => { if (input) return new Date(input); })
   @Expose()
   timestamp: Date;
 

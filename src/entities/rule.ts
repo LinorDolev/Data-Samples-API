@@ -17,7 +17,8 @@ export default class Rule {
   @Expose()
   @IsDefined()
   @IsString()
-  @Matches(RegExp(Rule.RULE_REGEX), { message: 'Invalid Syntax for formula, you can learn about the correct syntax at the ReadMe.md file' })
+  @Matches(RegExp(Rule.RULE_REGEX),
+    { message: 'Invalid Syntax for formula, you can learn about the correct syntax at the ReadMe.md file' })
   formula: string;
 
   constructor(formula: string) {

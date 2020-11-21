@@ -5,9 +5,9 @@ import bodyParser from 'body-parser';
 import * as dotenv from 'dotenv'; dotenv.config();
 
 
-import dataSampleRouter from './routers/dataSampleRouter';
-import ruleRouter from './routers/ruleRouter';
-import etlRouter from './routers/etlRouter';
+import dataSampleRouter from './routers/dataSample/dataSampleRouter';
+import ruleRouter from './routers/rule/ruleRouter';
+import etlRouter from './routers/etl/etlRouter';
 
 const app = express();
 

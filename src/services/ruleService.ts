@@ -22,8 +22,9 @@ export default class RuleService {
       .then(async (rule: Rule) => {
         let parsedRule = rule.formula;
         let samples = {};
-
+        
         parsedRule = parsedRule.replace(RegExp('or|OR'), '||').replace(RegExp('and|AND'), '&&');
+        
         for (const sampleType in SampleType) {
           await this.dataSampleService.findLastBySampleType(SampleType[sampleType])
             .then((sample: DataSample) => {

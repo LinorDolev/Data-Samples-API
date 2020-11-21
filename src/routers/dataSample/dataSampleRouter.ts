@@ -1,8 +1,8 @@
 import express from 'express';
 
-import DataSampleService from '../services/dataSampleService';
-import DataSample from '../entities/dataSample';
-import { requestBodyValidator } from '../utils/requestBodyValidator';
+import DataSampleService from '../../services/dataSampleService';
+import DataSample from '../../entities/dataSample';
+import { requestBodyValidator } from '../../utils/requestBodyValidator';
 
 const dataSampleRouter = express.Router();
 const sampleService = DataSampleService.getInstance();

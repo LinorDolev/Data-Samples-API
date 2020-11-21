@@ -11,11 +11,11 @@ export default class MongoCRUD<T> {
     this.collection = collection;
   }
 
-  private async connect(callback: Function): Promise<T> {
+  private async connect(callback: Function): Promise<any> {
     return MongoClient.connect(this.MONGO_URI, { useUnifiedTopology: true })
       .then(async (client: MongoClient) => {
         return this.getOrCreateCollection(this.collection, client.db(this.DB_NAME))
-          .then(collection => callback(collection)
+          .then((collection: MongoCollection) => callback(collection)
             .then((result: Document) => {
               client.close();
               return result;
@@ -42,6 +42,9 @@ export default class MongoCRUD<T> {
       .deleteOne({ _id: new ObjectId(id.toString()) }));
   }
 
+  async readAll(): Promise<T[]> {
+    return this.connect((collection: MongoCollection) => collection.find({}).toArray());
+  }
 
   clearDB(): Promise<T> {
     return this.connect((collection: MongoCollection) => collection.deleteMany({}));

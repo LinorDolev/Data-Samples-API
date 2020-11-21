@@ -13,14 +13,6 @@ export default class DataSampleService {
     this.mongoCRUD = new MongoCRUD<DataSample>(DataSample.name);
   }
 
-  query() {
-    const options = {
-      sort: { timestamp: -1 },
-      limit: 1
-    };
-    return this.mongoCRUD.read({}, options);
-  }
-
   async addSample(sample: DataSample): Promise<DataSample> {
     this.validateDate(sample.timestamp);
     this.validateSampleType(sample.sampleType, sample.value);
@@ -44,6 +36,10 @@ export default class DataSampleService {
       sort: { timestamp: -1 },
       limit: 1
     });
+  }
+
+  async readAll(): Promise<DataSample[]> {
+    return this.mongoCRUD.readAll();
   }
 
   async updateSample(id: string, dataSample: DataSample): Promise<DataSample> {
@@ -77,8 +73,8 @@ export default class DataSampleService {
 
       case SampleType.Temprature:
         if (value < DataSampleService.MIN_TEMPRATURE_CELSIUS) {
-          throw new Error(`Assuming temprature is measured in celsius: ${value} 
-                          is below absolute zero (${DataSampleService.MIN_TEMPRATURE_CELSIUS}° C)`)
+          throw new Error(`Assuming temprature is measured in celsius: ${value}`
+            + ` is below absolute zero (${DataSampleService.MIN_TEMPRATURE_CELSIUS}° C)`)
         }
         break;
 
