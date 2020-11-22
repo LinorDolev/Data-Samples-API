@@ -25,13 +25,13 @@ dataSampleRouter.get('/:id/:timezone?', (request, response, next) => {
 dataSampleRouter.put('/:id', (request, response, next) => {
   const dataSample = request.body;
   sampleService.updateSample(request.params.id, dataSample)
-    .then(sample => response.send(sample))
+    .then(mongoResult => response.send({ succeed: true, message: 'Updated successfully!' }))
     .catch(next);
 });
 
 dataSampleRouter.delete('/:id', (request, response, next) => {
   sampleService.deleteSample(request.params.id)
-    .then(sample => response.send(sample))
+    .then(mongoResult => response.send({ succeed: true, message: 'Deleted successfully!' }))
     .catch(next);
 });
 

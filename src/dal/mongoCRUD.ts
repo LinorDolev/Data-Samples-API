@@ -1,4 +1,5 @@
 import { MongoClient, MongoCollection, Db, Document, ObjectId } from 'mongodb';
+import DataSample from '../entities/dataSample';
 
 export default class MongoCRUD<T> {
   private readonly MONGO_URI = process.env.MONGO_URI;
@@ -33,8 +34,11 @@ export default class MongoCRUD<T> {
   }
 
   update(id: string, updatedDocument: T): Promise<T> {
+    if (Object.keys(updatedDocument).includes('_id')) {
+      delete updatedDocument['_id'];
+    }
     return this.connect((collection: MongoCollection) => collection.updateOne({ _id: new ObjectId(id.toString()) },
-      { '$set': updatedDocument }));
+      { $set: updatedDocument }));
   }
 
   async delete(id: string): Promise<T> {

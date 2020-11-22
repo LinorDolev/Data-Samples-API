@@ -31,14 +31,14 @@ ruleRouter.get('/:id', async (request, response, next) => {
 
 ruleRouter.put('/:id', async (request, response, next) => {
   return ruleService.updateRule(request.params.id, request.body)
-    .then(rule => response.send(rule))
+    .then(mongoResult => response.send({ succeed: true, message: 'Updated successfully!' }))
     .catch(next);
 });
 
 ruleRouter.delete('/:id', async (request, response, next) => {
   return ruleService.deleteRule(request.params.id)
-    .then((rule) => response.send(rule))
-    .catch(next);
+  .then(mongoResult => response.send({ succeed: true, message: 'Deleted successfully!' }))
+  .catch(next);
 });
 
 export default ruleRouter;
