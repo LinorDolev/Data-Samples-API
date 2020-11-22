@@ -40,5 +40,5 @@ In addition to the request parameters contains also:
 - startDate - task start timestamp
 - values - array of results calculated after each interval
 
-## Test
-Test are located under `/src/routers/dataSample` and `/src/routers/rule`, you can run them simply using `npm test`
+## Tests
+Tests are located under `/src/routers/dataSample` and `/src/routers/rule`, you can run them simply using `npm test`
