@@ -1,11 +1,12 @@
 # Data Samples API
 
-## Data Sample
+## Data Sample - all fields are required
   - timestamp - Sample Date
   - sampleType - Can be one of the following: `volume` / `pressure` / `temperature`. 
   - value - A number which is validated according to the sampleType
 
 You can query a sample and view it timestamp any timezone from: https://momentjs.com/timezone/
+
 
 ## Rule
  - formula - a formula that will later be assessed/evaluated with data samples values, to a boolean (True/False) result.
@@ -26,6 +27,7 @@ You can query a sample and view it timestamp any timezone from: https://momentjs
  5. You can concat as many rules as you wish using `and` and `or` operators
 
 ## ETL Tasks 
+### Request
 The ETL task is a single GET request in the following format:
 `/ETL/:calcType/:periodMinutes/:intervalMinutes/:sampleType`
 - calcType - can be one of: average, max, min, count
