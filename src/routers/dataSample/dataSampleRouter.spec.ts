@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaihttp from 'chai-http';
 import { describe, beforeEach, it } from 'mocha';
 import * as dotenv from 'dotenv'; dotenv.config()
+import moment from 'moment-timezone';
 
 import app from '../../app';
 import MongoCRUD from '../../dal/mongoCRUD';
@@ -22,7 +23,7 @@ describe('DataSamples Tests', () => {
 
   // POST REQUESTS
   it('should create a single data sample successfully', async () => {
-    const timestamp = new Date();
+    const timestamp = moment.utc();
     const value = 10;
     const dataSample = new DataSample(timestamp, SampleType.Volume, value);
     return chai.request(app)
@@ -35,7 +36,7 @@ describe('DataSamples Tests', () => {
   })
 
   it('should fail creating a sample with negative volume', async () => {
-    const timestamp = new Date();
+    const timestamp = moment.utc();
     const value = -10;
     const dataSample = new DataSample(timestamp, SampleType.Volume, value);
     return chai.request(app)
@@ -47,7 +48,7 @@ describe('DataSamples Tests', () => {
   })
 
   it('should fail creating a sample with invalid celsius temperature', async () => {
-    const timestamp = new Date();
+    const timestamp = moment.utc();
     const value = -300;
     const dataSample = new DataSample(timestamp, SampleType.Temprature, value);
     return chai.request(app)
@@ -59,7 +60,6 @@ describe('DataSamples Tests', () => {
   })
 
   it('should fail creating a sample without a timestamp', async () => {
-    const timestamp = new Date();
     const value = 10;
 
     return chai.request(app)
@@ -71,7 +71,7 @@ describe('DataSamples Tests', () => {
   })
 
   it('should fail creating a sample with timestamp from the future', async () => {
-    const timestamp = new Date(new Date().getTime() + 10000);
+    const timestamp = moment.utc().add(2, 'days');
     const value = 10;
     const dataSample = new DataSample(timestamp, SampleType.Temprature, value);
 
@@ -85,7 +85,7 @@ describe('DataSamples Tests', () => {
 
   // GET REQUESTS
   it('should get a single data sample successfully', async () => {
-    const timestamp = new Date();
+    const timestamp = moment.utc();
     const value = 10;
     const dataSample = new DataSample(timestamp, SampleType.Volume, value);
     return db.create(dataSample).then((sample) => {
@@ -100,7 +100,7 @@ describe('DataSamples Tests', () => {
   })
 
   it('should get a single data sample with timestamp in another timezone successfully', async () => {
-    const timestamp = new Date();
+    const timestamp = moment(moment.now());
     const value = 10;
     const dataSample = new DataSample(timestamp, SampleType.Volume, value);
     return db.create(dataSample).then((sample) => {
@@ -108,10 +108,9 @@ describe('DataSamples Tests', () => {
       return chai.request(app)
         .get(`${BASE_URL}/${sample['_id']}/America%2fNew_York`)
         .then(res => {
-          let timezoneOffset = new Date(res.body.timestamp).getTimezoneOffset()
-          console.log(res.body.timestamp);
-          console.log(timezoneOffset);
-          return //chai.expect().to.eql();
+          chai.expect(moment(res.body.timestamp).format()).equal(moment.tz(timestamp, 'America/New_York').local(true).format());
+          chai.expect(res.status).equal(200);
+          return
         }
         )
     });

@@ -26,9 +26,9 @@ export default class DataSampleService {
         if (!timezone) {
           return readSample;
         }
-        let dateInOtherTimezone = moment.tz(readSample.timestamp, timezone);
 
-        return { [`timestamp_at_${timezone}`]: dateInOtherTimezone.format(), ...readSample };
+        readSample.timestamp = moment.tz(readSample.timestamp, timezone).local(true);
+        return readSample;
       });
   }
 
@@ -58,8 +58,8 @@ export default class DataSampleService {
     return DataSampleService.instance;
   }
 
-  validateDate(date: Date) {
-    if (date > new Date()) {
+  validateDate(date: moment.Moment) {
+    if (date.isAfter(moment.now())) {
       throw new Error(`Date ${date} is from the future!`);
     }
   }

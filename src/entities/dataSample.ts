@@ -1,16 +1,16 @@
 import SampleType from './sampleType';
 import { Expose, Transform } from 'class-transformer';
-import { IsDefined, IsEnum, IsNumber } from 'class-validator';
-
+import { IsDefined, IsEnum, IsNumber, Validate, ValidateIf } from 'class-validator';
+import * as moment from 'moment';
 
 export default class DataSample {
   @Expose()
   _id: string;
 
   @IsDefined()
-  @Transform((input) => { if (input) return new Date(input); })
+  @Transform((input) => { if (input) return moment.utc(input) })
   @Expose()
-  timestamp: Date;
+  timestamp: moment.Moment;
 
   @IsDefined()
   @IsEnum(SampleType)
@@ -22,7 +22,7 @@ export default class DataSample {
   @Expose()
   value: number;
 
-  constructor(timestamp: Date, sampleType: SampleType, value: number) {
+  constructor(timestamp: moment.Moment, sampleType: SampleType, value: number) {
     this.timestamp = timestamp;
     this.sampleType = sampleType;
     this.value = value;
